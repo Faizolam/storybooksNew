@@ -2,7 +2,6 @@ name: Build and Deploy to Google Compute Engine
 
 on:
   push:
-    # Turning off staging for now...
     branches:
       - main
     tags:
@@ -28,15 +27,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      # Setup gcloud CLI
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@v2
+      # Authenticate to Google Cloud
+      - id: 'auth'
+        uses: google-github-actions/auth@v2
         with:
-          version: '>= 363.0.0'
-          service_account_key: ${{ secrets.GCE_SA_KEY }}
-          project_id: ${{ env.PROJECT_ID }}
+          credentials_json: ${{ secrets.GCE_SA_KEY }}  # Use this if you're using a service account key
+          # OR for Workload Identity Federation, uncomment and configure the following lines:
+          # workload_identity_provider: 'projects/123/locations/global/workloadIdentityPools/pool/providers'
+          # service_account: '[email protected]'
 
-      # Configure Docker to use the gcloud command-line tool as a credential
-      # helper for authentication
+      # Setup gcloud CLI with the latest version
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+          version: '>= 363.0.0'  # Specify a compatible version
+
+      # Configure Docker to use gcloud as credential helper
       - run: |-
           gcloud --quiet auth configure-docker
 
@@ -50,6 +57,7 @@ jobs:
         run: |-
           make push
 
+      # Deploy the application
       - name: Deploy
         run: |-
           make deploy
