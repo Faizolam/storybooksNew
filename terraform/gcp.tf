@@ -5,6 +5,12 @@ provider "google" {
     zone        = "us-central1-c"
 }
 
+# # Create a Service Account
+# resource "google_service_account" "webserver" {
+#   account_id   = "webserver-account"
+#   display_name = "Web Server Service Account"
+# }
+
 # STATIC IP ADDRESS
 resource "google_compute_address" "ip_address" {
   name = "storybooks-ip-${terraform.workspace}"
@@ -31,17 +37,17 @@ resource "google_compute_firewall" "allow_http" {
 }
 
 
-# # OS IMAGE
-# data "google_compute_image" "ubuntu_image" {
-#   family  = "ubuntu-2204-lts"  # Change this to the desired Ubuntu version
-#   project = "ubuntu-os-cloud"
-# }
-
 # OS IMAGE
-data "google_compute_image" "cos_image" {
-  family  = "cos-105-lts"
-  project = "cos-cloud"
+data "google_compute_image" "ubuntu_image" {
+  family  = "ubuntu-2204-lts" 
+  project = "ubuntu-os-cloud"
 }
+
+# # OS IMAGE
+# data "google_compute_image" "cos_image" {
+#   family  = "cos-105-lts"
+#   project = "cos-cloud"
+# }
 
 # COMPUTE ENGINE INSTANCE
 resource "google_compute_instance" "instance" {
@@ -53,7 +59,7 @@ resource "google_compute_instance" "instance" {
 
   boot_disk {
     initialize_params {
-      image = data.google_compute_image.cos_image.self_link
+      image = data.google_compute_image.ubuntu_image.self_link
     }
   }
 
@@ -65,7 +71,17 @@ resource "google_compute_instance" "instance" {
     }
   }
   
+  # service_account {
+  #   scopes = ["storage-ro"]
+  # }
+
+  # service_account {
+  #   email  = google_service_account.webserver.email
+  #   scopes = ["https://www.googleapis.com/auth/cloud-platform"]
+  # }
+
   service_account {
-    scopes = ["storage-ro"]
+    email  = "terraform-service@devopsstorybooks.iam.gserviceaccount.com"
+    scopes = ["https://www.googleapis.com/auth/cloud-platform"]
   }
 }

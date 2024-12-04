@@ -15,10 +15,11 @@ jobs:
     name: Setup, Build, Publish, and Deploy
     runs-on: ubuntu-latest
 
+    #GITHUB_REF : refs/heads/main/refs/tags/v0.0.1
     steps:
       - name: Set ENV
         run: |-
-          if [ ${GITHUB_REF##*/} = "main" ]; then
+          if [ ${GITHUB_REF##*/} = "main" ]; then  
             echo "ENV=staging" >> $GITHUB_ENV
           else 
             echo "ENV=prod" >> $GITHUB_ENV

@@ -2,3 +2,6 @@ node_modules
 config/config.env
 *key.json
 .terraform/
+*.txt
+terraform/environments/common.tfvars
+storybooksCICD&DeploymentDiagram
