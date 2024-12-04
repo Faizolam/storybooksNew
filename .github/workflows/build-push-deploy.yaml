@@ -32,7 +32,7 @@ jobs:
       - id: 'auth'
         uses: google-github-actions/auth@v2
         with:
-          credentials_json: ${{ secrets.GCE_SA_KEY }}  # Use this if you're using a service account key
+          credentials_json: ${{ secrets.GCE_SA_KEY }}  ## Use this if you're using a service account key
           # OR for Workload Identity Federation, uncomment and configure the following lines:
           # workload_identity_provider: 'projects/123/locations/global/workloadIdentityPools/pool/providers'
           # service_account: '[email protected]'

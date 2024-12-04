@@ -21,7 +21,7 @@ module.exports = function(passport) {
         };
 
         try {
-          // Check if user already exists
+          // Check if user already exists.
           let user = await User.findOne({ googleId: profile.id });
 
           if (user) {
